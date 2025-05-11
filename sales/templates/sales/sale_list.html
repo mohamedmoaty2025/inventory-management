@@ -1,0 +1,146 @@
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>سجل المبيعات</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: rtl;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        input[type="date"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 200px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        a {
+            margin-right: 10px;
+            color: #3498db;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            max-width: 900px;
+            margin: 20px auto;
+        }
+
+        li {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        li strong {
+            color: #2c3e50;
+        }
+
+        .total-sales {
+            font-weight: bold;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+
+        .navigation-links {
+            text-align: center;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>سجل عمليات البيع</h1>
+
+    <form method="get">
+        <label for="start_date">من تاريخ:</label>
+        <input type="date" name="start_date" value="{{ request.GET.start_date }}" id="start_date">
+
+        <label for="end_date">إلى تاريخ:</label>
+        <input type="date" name="end_date" value="{{ request.GET.end_date }}" id="end_date">
+
+        <button type="submit">فلترة</button>
+        <a href="{% url 'sale-list' %}">إلغاء</a>
+    </form>
+
+    <p class="total-sales">إجمالي المبيعات المعروضة: {{ total_sales }} جنيه</p>
+
+    <ul>
+        {% for sale in sales %}
+            <li>
+                <strong>المنتج:</strong> {{ sale.product.name }} |
+                <strong>الكمية:</strong> {{ sale.quantity }} |
+                <strong>التاريخ:</strong> {{ sale.sale_date|date:"Y-m-d H:i" }} |
+                <strong>السعر الكلي:</strong> {{ sale.total_price }} جنيه 
+                
+                <a href="{% url 'sale-invoice' sale.id %}" class="btn btn-primary">عرض الفاتورة</a>
+            </li>
+        {% empty %}
+            <li>لا توجد مبيعات حتى الآن.</li>
+        {% endfor %}
+    </ul>
+
+    <div class="navigation-links">
+        <a href="{% url 'sale-add' %}">تسجيل بيع جديد</a> |
+        <a href="{% url 'product-list' %}">العودة للمنتجات</a>
+    </div>
+</body>
+</html>

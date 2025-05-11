@@ -1,0 +1,51 @@
+<!-- templates/home.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">مرحبًا بك في نظام إدارة المخزون</h2>
+
+<div class="row g-4">
+  <div class="col-md-4">
+    <div class="card text-white bg-primary h-100">
+      <div class="card-body">
+        <h5 class="card-title">عدد المنتجات</h5>
+        <p class="card-text display-6">{{ products_count }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card text-white bg-success h-100">
+      <div class="card-body">
+        <h5 class="card-title">عدد المبيعات</h5>
+        <p class="card-text display-6">{{ sales_count }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card text-white bg-warning h-100">
+      <div class="card-body">
+        <h5 class="card-title">عدد المشتريات</h5>
+        <p class="card-text display-6">{{ purchases_count }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="my-5">
+
+<h4>المنتجات القليلة في المخزون</h4>
+{% if low_stock %}
+  <ul class="list-group">
+    {% for product in low_stock %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ product.name }}
+        <span class="badge bg-danger rounded-pill">{{ product.quantity }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <div class="alert alert-success mt-3">لا يوجد منتجات ناقصة في المخزون ✅</div>
+{% endif %}
+{% endblock %}

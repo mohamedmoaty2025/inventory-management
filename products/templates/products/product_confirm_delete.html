@@ -1,0 +1,17 @@
+{% load widget_tweaks %}    
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>تأكيد الحذف</title>
+</head>
+<body>
+    <h1>هل أنت متأكد أنك تريد حذف المنتج "{{ object.name }}"؟</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">نعم، احذف</button>
+        <a href="{% url 'product-list' %}">إلغاء</a>
+    </form>
+</body>
+</html>

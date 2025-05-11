@@ -1,0 +1,60 @@
+{% load static %}
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>إضافة منتج</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            text-align: right;
+            background-color: #f9f9f9;
+            padding: 30px;
+        }
+
+        form {
+            background: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            max-width: 500px;
+            margin: auto;
+            border-radius: 8px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align:center;">إضافة منتج جديد</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">حفظ المنتج</button>
+    </form>
+
+    <a href="{% url 'product-list' %}">العودة لقائمة المنتجات</a>
+</body>
+</html>
