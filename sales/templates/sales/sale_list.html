@@ -1,146 +1,168 @@
+{% extends "base.html" %}
 {% load widget_tweaks %}
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>سجل المبيعات</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            direction: rtl;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
+{% block content %}
 
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 30px;
-        }
+<title>سجل المبيعات</title>
 
-        form {
-            background-color: #ffffff;
-            padding: 20px;
-            margin-bottom: 30px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        label {
-            font-weight: bold;
-            font-size: 14px;
-            margin-right: 10px;
-        }
+    .sale-header {
+        margin-top: 30px;
+        margin-bottom: 30px;
+        text-align: center;
+        color: #2c3e50;
+    }
 
-        input[type="date"] {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-            width: 200px;
-        }
+    .filter-form {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
 
-        button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 14px;
-            margin-top: 10px;
-            transition: background-color 0.3s ease;
-        }
+    .table td, .table th {
+        vertical-align: middle;
+    }
 
-        button:hover {
-            background-color: #45a049;
-        }
+    .navigation-links {
+        margin-top: 30px;
+        text-align: center;
+    }
 
-        a {
-            margin-right: 10px;
-            color: #3498db;
-            text-decoration: none;
-            font-size: 14px;
-        }
+    .btn-sm {
+        font-size: 14px;
+    }
 
-        a:hover {
-            text-decoration: underline;
-        }
+    .total-sales {
+        font-weight: bold;
+        font-size: 18px;
+        color: #2c3e50;
+        margin-bottom: 20px;
+    }
 
-        ul {
-            list-style: none;
-            padding: 0;
-            max-width: 900px;
-            margin: 20px auto;
-        }
+    /* تصميم قسم أفضل 5 منتجات */
+    .top-selling-section {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        margin-bottom: 40px;
+    }
 
-        li {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            margin-bottom: 15px;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+    .top-selling-section h2 {
+        margin-bottom: 20px;
+        color: #2c3e50;
+        text-align: center;
+    }
 
-        li strong {
-            color: #2c3e50;
-        }
+    .top-selling-list {
+        list-style: none;
+        padding: 0;
+        max-width: 400px;
+        margin: 0 auto;
+        font-size: 16px;
+    }
 
-        .total-sales {
-            font-weight: bold;
-            font-size: 16px;
-            color: #2c3e50;
-        }
+    .top-selling-list li {
+        padding: 8px 12px;
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        justify-content: space-between;
+        color: #34495e;
+    }
 
-        .navigation-links {
-            text-align: center;
-            margin-top: 30px;
-        }
-    </style>
-</head>
-<body>
-    <h1>سجل عمليات البيع</h1>
+    .top-selling-list li:last-child {
+        border-bottom: none;
+    }
+</style>
 
-    <form method="get">
-        <label for="start_date">من تاريخ:</label>
-        <input type="date" name="start_date" value="{{ request.GET.start_date }}" id="start_date">
+<body class="container py-4">
 
-        <label for="end_date">إلى تاريخ:</label>
-        <input type="date" name="end_date" value="{{ request.GET.end_date }}" id="end_date">
+    <h1 class="sale-header">سجل عمليات البيع</h1>
 
-        <button type="submit">فلترة</button>
-        <a href="{% url 'sale-list' %}">إلغاء</a>
+    <!-- أفضل 5 منتجات الأكثر مبيعًا (مقدمة الصفحة) -->
+    {% if top_selling %}
+    <div class="top-selling-section">
+        <h2>أفضل 5 منتجات الأكثر مبيعًا</h2>
+        <ul class="top-selling-list">
+            {% for product in top_selling %}
+                <li>
+                    <span>{{ forloop.counter }}. {{ product.product__name }}</span>
+                    <span>الكمية المباعة: {{ product.total_quantity_sold }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- فلترة بالتاريخ -->
+    <form method="get" class="row filter-form align-items-end justify-content-center">
+        <div class="col-md-4">
+            <label for="start_date" class="form-label">من تاريخ:</label>
+            <input type="date" name="start_date" value="{{ request.GET.start_date }}" id="start_date" class="form-control">
+        </div>
+        <div class="col-md-4">
+            <label for="end_date" class="form-label">إلى تاريخ:</label>
+            <input type="date" name="end_date" value="{{ request.GET.end_date }}" id="end_date" class="form-control">
+        </div>
+        <div class="col-md-4 d-flex gap-2 mt-3 mt-md-0">
+            <button type="submit" class="btn btn-success">فلترة</button>
+            <a href="{% url 'sale-list' %}" class="btn btn-outline-secondary">إلغاء</a>
+        </div>
     </form>
 
-    <p class="total-sales">إجمالي المبيعات المعروضة: {{ total_sales }} جنيه</p>
-
-    <ul>
-        {% for sale in sales %}
-            <li>
-                <strong>المنتج:</strong> {{ sale.product.name }} |
-                <strong>الكمية:</strong> {{ sale.quantity }} |
-                <strong>التاريخ:</strong> {{ sale.sale_date|date:"Y-m-d H:i" }} |
-                <strong>السعر الكلي:</strong> {{ sale.total_price }} جنيه 
-                
-                <a href="{% url 'sale-invoice' sale.id %}" class="btn btn-primary">عرض الفاتورة</a>
-            </li>
-        {% empty %}
-            <li>لا توجد مبيعات حتى الآن.</li>
-        {% endfor %}
-    </ul>
-
-    <div class="navigation-links">
-        <a href="{% url 'sale-add' %}">تسجيل بيع جديد</a> |
-        <a href="{% url 'product-list' %}">العودة للمنتجات</a>
+    <!-- إجمالي المبيعات -->
+    <div class="text-center mb-4">
+        <p class="total-sales">إجمالي المبيعات المعروضة: {{ total_sales }} جنيه</p>
+        <p class="text-success fw-bold">مبيعات اليوم: {{ daily_sales }} جنيه</p>
+        <p class="text-info fw-bold">مبيعات هذا الشهر: {{ monthly_sales }} جنيه</p>
     </div>
+
+    <!-- جدول المبيعات -->
+    {% if sales %}
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered text-center align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>المنتج</th>
+                        <th>الكمية</th>
+                        <th>التاريخ</th>
+                        <th>السعر الكلي</th>
+                        <th>الإجراء</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sale in sales %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ sale.product.name }}</td>
+                            <td>{{ sale.quantity }}</td>
+                            <td>{{ sale.sale_date|date:"Y-m-d H:i" }}</td>
+                            <td>{{ sale.total_price }} جنيه</td>
+                            <td>
+                                <a href="{% url 'sale-invoice' sale.id %}?format=pdf" target="_blank" class="btn btn-primary btn-sm">عرض الفاتورة</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-warning text-center">لا توجد مبيعات حتى الآن.</div>
+    {% endif %}
+
+    <!-- روابط تنقل -->
+    <div class="navigation-links">
+        <a href="{% url 'sale-add' %}" class="btn btn-outline-success me-2">تسجيل بيع جديد</a>
+        <a href="{% url 'product-list' %}" class="btn btn-outline-primary">العودة للمنتجات</a>
+    </div>
+
 </body>
-</html>
+
+{% endblock content %}

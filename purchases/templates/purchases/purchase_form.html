@@ -1,51 +1,91 @@
+{% extends "base.html" %}
 {% load widget_tweaks %}
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
+
+{% block content %}
     <title>إضافة عملية شراء</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-</head>
+   
 <body class="bg-light p-5">
 
     <div class="container bg-white shadow p-4 rounded" style="max-width: 600px;">
         <h2 class="mb-4 text-center">إضافة عملية شراء جديدة</h2>
 
-        <form method="post" novalidate>
-            {% csrf_token %}
+    <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
 
-            <!-- حقل اسم المنتج -->
-            <div class="mb-3">
-                <label for="id_product" class="form-label">اسم المنتج</label>
-                {{ form.product|add_class:"form-control" }}
-            </div>
+    <!-- اختيار منتج من القائمة -->
+    <div class="mb-3" id="existing-product-div">
+        <label for="id_product" class="form-label">اختر منتج من القائمة</label>
+        {{ form.product|add_class:"form-control" }}
+    </div>
 
-            <!-- حقل السعر -->
-            <div class="mb-3">
-                <label for="id_price" class="form-label">السعر</label>
-                {{ form.price|add_class:"form-control" }}
-            </div>
+    <!-- أو إدخال اسم منتج جديد -->
+    <div class="mb-3" id="new-product-div">
+        <label for="id_product_new" class="form-label">أو أدخل اسم منتج جديد</label>
+        {{ form.product_new|add_class:"form-control" }}
+    </div>
 
-            <!-- حقل الكمية -->
-            <div class="mb-3">
-                <label for="id_quantity" class="form-label">الكمية</label>
-                {{ form.quantity|add_class:"form-control" }}
-            </div>
+    <!-- فئة المنتج (في حال المنتج جديد) -->
+    <div class="mb-3">
+        <label for="id_category" class="form-label">فئة المنتج (في حال إدخال منتج جديد)</label>
+        {{ form.category|add_class:"form-control" }}
+    </div>
 
-            <!-- حقل المورد -->
-            <div class="mb-3">
-                <label for="id_supplier" class="form-label">اسم المورد</label>
-                {{ form.supplier|add_class:"form-control" }}
-            </div>
+    <!-- السعر -->
+    <div class="mb-3">
+        <label for="id_price" class="form-label">السعر</label>
+        {{ form.price|add_class:"form-control" }}
+    </div>
 
-            <!-- زر حفظ -->
-            <button type="submit" class="btn btn-success w-100">حفظ</button>
-        </form>
+    <!-- الكمية -->
+    <div class="mb-3">
+        <label for="id_quantity" class="form-label">الكمية</label>
+        {{ form.quantity|add_class:"form-control" }}
+    </div>
 
-        <div class="text-center mt-3">
-            <a href="{% url 'product-list' %}" class="btn btn-link">رجوع للمنتجات</a>
-        </div>
+    <!-- اسم المورد -->
+    <div class="mb-3">
+        <label for="id_supplier" class="form-label">اسم المورد</label>
+        {{ form.supplier|add_class:"form-control" }}
+    </div>
+
+    <!-- صورة المنتج -->
+    {% if form.image %}
+    <div class="mb-3">
+        <label for="id_image" class="form-label">صورة المنتج</label>
+        {{ form.image|add_class:"form-control" }}
+    </div>
+    {% endif %}
+
+    <button type="submit" class="btn btn-success w-100">حفظ</button>
+    </form>
+
+    <script>
+    const productInput = document.getElementById("id_product");
+    const productNewInput = document.getElementById("id_product_new");
+
+    function toggleFields() {
+        if (productNewInput.value.trim() !== "") {
+            productInput.disabled = true;
+        } else {
+            productInput.disabled = false;
+        }
+
+        if (productInput.value !== "") {
+            productNewInput.disabled = true;
+        } else {
+            productNewInput.disabled = false;
+        }
+    }
+
+    productInput.addEventListener("change", toggleFields);
+    productNewInput.addEventListener("input", toggleFields);
+    window.addEventListener("DOMContentLoaded", toggleFields);
+    </script>
+
+    <div class="text-center mt-3">
+        <a href="{% url 'product-list' %}" class="btn btn-link">رجوع للمنتجات</a>
+    </div>
     </div>
 
 </body>
-</html>
+{% endblock content %}

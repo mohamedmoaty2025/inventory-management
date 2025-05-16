@@ -1,8 +1,8 @@
+{% extends "base.html" %}
 {% load widget_tweaks %}
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
+
+{%block content%}
+   
     <title>تسجيل عملية بيع</title>
     <style>
         body {
@@ -78,32 +78,86 @@
         a:hover {
             text-decoration: underline;
         }
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+            display: none;
+        }
     </style>
-</head>
+
 <body>
     <h1>تسجيل بيع منتج</h1>
 
-    <form method="POST">
+    <form method="POST" id="sales-form">
         {% csrf_token %}
         <label for="id_product">المنتج</label>
-    {{ form.product|add_class:"form-control" }}
+        {{ form.product|add_class:"form-control" }}
 
-    <label for="id_quantity">الكمية</label>
-    {{ form.quantity|add_class:"form-control" }}
+        <label for="id_quantity">الكمية</label>
+        {{ form.quantity|add_class:"form-control" }}
+        <span id="quantity-error" class="error-message">يرجى إدخال الكمية بشكل صحيح.</span>
 
-    <label for="id_customer_name">اسم العميل</label>
-    {{ form.customer_name|add_class:"form-control" }}
+        <label for="id_customer_name">اسم العميل</label>
+        {{ form.customer_name|add_class:"form-control" }}
 
-    <label for="id_discount">الخصم (جنيه)</label>
-    {{ form.discount|add_class:"form-control" }}
+        <label for="id_discount">الخصم (جنيه)</label>
+        {{ form.discount|add_class:"form-control" }}
 
-    <label for="id_tax">الضريبة (%)</label>
-    {{ form.tax|add_class:"form-control" }}
+        <label for="id_tax">الضريبة (%)</label>
+        {{ form.tax|add_class:"form-control" }}
 
-    <button type="submit">تسجيل البيع</button>
-    
+        <button type="submit">تسجيل البيع</button>
     </form>
 
     <a href="{% url 'product-list' %}">العودة للمنتجات</a>
+
+    <script>
+        // جلب الحقول
+        const form = document.getElementById('sales-form');
+        const quantityField = document.getElementById('id_quantity');
+        const discountField = document.getElementById('id_discount');
+        const taxField = document.getElementById('id_tax');
+        const quantityError = document.getElementById('quantity-error');
+
+        // التحقق من المدخلات
+        form.addEventListener('submit', function(e) {
+            // تحقق من الكمية
+            const quantity = quantityField.value;
+            if (isNaN(quantity) || quantity <= 0) {
+                e.preventDefault(); // منع إرسال النموذج
+                quantityError.style.display = 'block';
+                quantityField.classList.add('is-invalid');
+            } else {
+                quantityError.style.display = 'none';
+                quantityField.classList.remove('is-invalid');
+            }
+
+            // التحقق من الخصم
+            const discount = discountField.value;
+            if (discount && (isNaN(discount) || discount < 0)) {
+                e.preventDefault(); // منع إرسال النموذج
+                alert('الخصم يجب أن يكون عددًا موجبًا.');
+            }
+
+            // التحقق من الضريبة
+            const tax = taxField.value;
+            if (tax && (isNaN(tax) || tax < 0)) {
+                e.preventDefault(); // منع إرسال النموذج
+                alert('الضريبة يجب أن تكون عددًا موجبًا.');
+            }
+        });
+
+        // تحسين التفاعل مع الحقول عند الكتابة
+        quantityField.addEventListener('input', function() {
+            if (quantityField.value > 0) {
+                quantityField.classList.remove('is-invalid');
+                quantityError.style.display = 'none';
+            }
+        });
+    </script>
 </body>
-</html>
+
+
+
+{%endblock content%}

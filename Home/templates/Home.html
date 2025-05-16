@@ -1,51 +1,113 @@
-<!-- templates/home.html -->
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}الصفحة الرئيسية - نظام إدارة المخزون{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">مرحبًا بك في نظام إدارة المخزون</h2>
 
-<div class="row g-4">
+<!-- ✅ إعلان علوي -->
+<div class="alert alert-info text-center fs-5" role="alert">
+  🎉 عروض جديدة على الموردين والمنتجات! تابع كل جديد أولًا بأول.
+</div>
+
+<!-- ✅ سلايدر صور (Carousel) -->
+<div id="mainCarousel" class="carousel slide mb-5 shadow rounded" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="{% static 'images/slider1.jpg' %}" class="d-block w-100 rounded" alt="صورة 1">
+    </div>
+    <div class="carousel-item">
+      <img src="{% static 'images/slider2.jpg' %}" class="d-block w-100 rounded" alt="صورة 2">
+    </div>
+    <div class="carousel-item">
+      <img src="{% static 'images/slider3.jpg' %}" class="d-block w-100 rounded" alt="صورة 3">
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+  </button>
+</div>
+
+<!-- ✅ قسم الإحصائيات -->
+<div class="row text-center mb-5 g-4">
   <div class="col-md-4">
-    <div class="card text-white bg-primary h-100">
-      <div class="card-body">
-        <h5 class="card-title">عدد المنتجات</h5>
-        <p class="card-text display-6">{{ products_count }}</p>
-      </div>
+    <div class="bg-success text-white p-4 rounded shadow">
+      <h4>عدد المبيعات</h4>
+      <h2>{{ sales_count }}</h2>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="bg-primary text-white p-4 rounded shadow">
+      <h4>عدد المنتجات</h4>
+      <h2>{{ products_count }}</h2>
     </div>
   </div>
 
   <div class="col-md-4">
-    <div class="card text-white bg-success h-100">
-      <div class="card-body">
-        <h5 class="card-title">عدد المبيعات</h5>
-        <p class="card-text display-6">{{ sales_count }}</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-4">
-    <div class="card text-white bg-warning h-100">
-      <div class="card-body">
-        <h5 class="card-title">عدد المشتريات</h5>
-        <p class="card-text display-6">{{ purchases_count }}</p>
-      </div>
+    <div class="bg-warning text-dark p-4 rounded shadow">
+      <h4>عدد عمليات الشراء</h4>
+      <h2>{{ purchases_count }}</h2>
     </div>
   </div>
 </div>
 
-<hr class="my-5">
-
-<h4>المنتجات القليلة في المخزون</h4>
-{% if low_stock %}
-  <ul class="list-group">
-    {% for product in low_stock %}
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        {{ product.name }}
-        <span class="badge bg-danger rounded-pill">{{ product.quantity }}</span>
-      </li>
+{% if out_of_stock %}
+<div class="alert alert-danger mt-5">
+  <h5>🚨 المنتجات التي نفدت من المخزون:</h5>
+  <ul class="mb-0">
+    {% for product in out_of_stock %}
+      <li>{{ product.name }} - الكمية: {{ product.quantity }}</li>
     {% endfor %}
   </ul>
-{% else %}
-  <div class="alert alert-success mt-3">لا يوجد منتجات ناقصة في المخزون ✅</div>
+</div>
 {% endif %}
+
+<!-- ✅ كروت الوظائف -->
+<div class="row g-4 justify-content-center">
+
+ 
+
+  <!-- كارت الموردين -->
+  <div class="col-md-4">
+    <div class="card shadow text-center">
+      <img src="{% static 'images/supplier.jpg' %}" class="card-img-top" alt="موردين">
+      <div class="card-body">
+        <h5 class="card-title">إدارة الموردين</h5>
+        <p class="card-text">أضف وتابع الموردين بكل سهولة.</p>
+        <a href="{% url 'supplier-list' %}" class="btn btn-success">عرض الموردين</a>
+        <a href="{% url 'supplier-add' %}" class="btn btn-outline-success mt-2">إضافة مورد</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- كارت المنتجات -->
+  <div class="col-md-4">
+    <div class="card shadow text-center">
+      <img src="{% static 'images/products.jpg' %}" class="card-img-top" alt="منتجات">
+      <div class="card-body">
+        <h5 class="card-title">إدارة المنتجات</h5>
+        <p class="card-text">نظّم منتجاتك وتابعها بكل سهولة.</p>
+        <a href="{% url 'product-list' %}" class="btn btn-primary">عرض المنتجات</a>
+        <a href="{% url 'sale-add' %}" class="btn btn-outline-primary mt-2">بيع منتج</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- كارت المشتريات -->
+  <div class="col-md-4">
+    <div class="card shadow text-center">
+      <img src="{% static 'images/purchase.jpg' %}" class="card-img-top" alt="مشتريات">
+      <div class="card-body">
+        <h5 class="card-title">عمليات الشراء</h5>
+        <p class="card-text">سجّل المشتريات واطبع الفواتير.</p>
+        <a href="{% url 'purchase-add' %}" class="btn btn-warning">عملية شراء جديدة</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 {% endblock %}

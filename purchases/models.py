@@ -15,11 +15,14 @@ class Supplier(models.Model):
     
     
 class Purchase(models.Model):
-    product = models.CharField(max_length=100)
+    product_new = models.CharField(max_length=100,null= True,blank=True,verbose_name='منتج جديد')
+    product = models.ForeignKey(Products , on_delete=models.CASCADE ,verbose_name='المنتج', null= True ,blank= True) 
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     quantity = models.PositiveIntegerField()
     purchase_date = models.DateTimeField(auto_now_add=True,verbose_name='تاريخ الشراء')
     supplier = models.ForeignKey(Supplier,on_delete=models.CASCADE ,verbose_name= 'المورد')
+    # image = models.ImageField(upload_to='static/images',null=True, blank=True)
+    
     def __str__(self):
         return f"شراء {self.quantity} من {self.product} -{self.supplier}"
 

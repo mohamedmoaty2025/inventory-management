@@ -13,5 +13,6 @@ class Home(LoginRequiredMixin,TemplateView):
         context['products_count'] = Products.objects.count()
         context['sales_count'] = Sale.objects.count()
         context['purchases_count'] = Purchase.objects.count()
-        context['low_stock'] = Products.objects.filter(quantity__lt=5)  # المنتجات القليلة
+        context['low_stock'] = Products.objects.filter(quantity__lt=5)
+        context['out_of_stock'] = Products.objects.filter(quantity=0)# المنتجات القليلة
         return context
